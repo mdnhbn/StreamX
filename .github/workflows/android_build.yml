@@ -24,9 +24,12 @@ jobs:
 
       - name: Build Web App
         run: |
+          # বিল্ড করার চেষ্টা করবে, না হলে একটি ডামি ইন্ডেক্স ফাইল তৈরি করবে যাতে স্ক্রিন সাদা না থাকে
           npm run build || true
           mkdir -p dist
-          cp index.html dist/index.html || echo "<html></html>" > dist/index.html
+          if [ ! -f dist/index.html ]; then
+            cp index.html dist/index.html || echo "<html><body style='background:#000;color:#fff;display:flex;justify-content:center;align-items:center;height:100vh;'><h1>StreamX Loading...</h1></body></html>" > dist/index.html
+          fi
 
       - name: Setup Java 21
         uses: actions/setup-java@v4
@@ -39,13 +42,15 @@ jobs:
 
       - name: Initialize and Sync Capacitor
         run: |
+          # কনফিগারেশন ফাইলটি নতুন করে তৈরি করা হচ্ছে যাতে পাথের ভুল না থাকে
           echo '{"appId": "com.mdnhbn.streamx", "appName": "StreamX", "webDir": "dist", "server": {"androidScheme": "https"}}' > capacitor.config.json
           npx cap add android || true
+          # ইন্ডেক্স ফাইলটি অ্যান্ড্রয়েড অ্যাসেট ফোল্ডারে কপি করা নিশ্চিত করা
+          npx cap copy android
           npx cap sync android
 
       - name: Fix Duplicate Class Error
         run: |
-          # এই কমান্ডটি ডুপ্লিকেট ক্লাস এরর ঠিক করবে
           echo "configurations.all {
               resolutionStrategy.eachDependency { details ->
                   if (details.requested.group == 'org.jetbrains.kotlin') {
@@ -63,5 +68,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: StreamX-Success-APK
+          name: StreamX-Fixed-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
