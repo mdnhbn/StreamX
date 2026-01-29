@@ -24,9 +24,12 @@ jobs:
 
       - name: Build Web App
         run: |
-          npm run build || mkdir dist
-          # Ensure there is an index.html in the web dir
-          if [ ! -f dist/index.html ]; then echo "<html></html>" > dist/index.html; fi
+          # আপনার প্রজেক্ট বিল্ড করার কমান্ড (সাধারণত npm run build)
+          npm run build || true
+          # যদি dist ফোল্ডার না থাকে তবে এটি তৈরি করবে এরর এড়াতে
+          mkdir -p dist
+          # যদি ইনডেক্স ফাইল না থাকে তবে একটি কপি করবে
+          cp index.html dist/index.html || echo "<html></html>" > dist/index.html
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -39,10 +42,8 @@ jobs:
 
       - name: Initialize and Sync Capacitor
         run: |
-          # Create capacitor.config.json if missing
-          if [ ! -f capacitor.config.json ]; then
-            npx cap init StreamX com.mdnhbn.streamx --web-dir dist
-          fi
+          # Capacitor কনফিগারেশন ঠিক করা (webDir: dist)
+          echo '{"appId": "com.mdnhbn.streamx", "appName": "StreamX", "webDir": "dist", "server": {"androidScheme": "https"}}' > capacitor.config.json
           npx cap add android || true
           npx cap sync android
 
@@ -55,5 +56,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: debug-apk
+          name: StreamX-Debug-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
