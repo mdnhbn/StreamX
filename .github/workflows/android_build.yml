@@ -24,25 +24,21 @@ jobs:
 
       - name: Build Web App
         run: |
-          # আপনার প্রজেক্ট বিল্ড করার কমান্ড (সাধারণত npm run build)
           npm run build || true
-          # যদি dist ফোল্ডার না থাকে তবে এটি তৈরি করবে এরর এড়াতে
           mkdir -p dist
-          # যদি ইনডেক্স ফাইল না থাকে তবে একটি কপি করবে
           cp index.html dist/index.html || echo "<html></html>" > dist/index.html
 
-      - name: Setup Java
+      - name: Setup Java 21
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-version: '21' # এখানে জাভা ২১ করে দেওয়া হয়েছে
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
       - name: Initialize and Sync Capacitor
         run: |
-          # Capacitor কনফিগারেশন ঠিক করা (webDir: dist)
           echo '{"appId": "com.mdnhbn.streamx", "appName": "StreamX", "webDir": "dist", "server": {"androidScheme": "https"}}' > capacitor.config.json
           npx cap add android || true
           npx cap sync android
@@ -56,5 +52,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: StreamX-Debug-APK
+          name: StreamX-Final-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
