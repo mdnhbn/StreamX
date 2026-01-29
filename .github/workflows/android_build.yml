@@ -32,7 +32,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '21' # এখানে জাভা ২১ করে দেওয়া হয়েছে
+          java-version: '21'
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
@@ -43,6 +43,17 @@ jobs:
           npx cap add android || true
           npx cap sync android
 
+      - name: Fix Duplicate Class Error
+        run: |
+          # এই কমান্ডটি ডুপ্লিকেট ক্লাস এরর ঠিক করবে
+          echo "configurations.all {
+              resolutionStrategy.eachDependency { details ->
+                  if (details.requested.group == 'org.jetbrains.kotlin') {
+                      details.useVersion '1.8.22'
+                  }
+              }
+          }" >> android/app/build.gradle
+
       - name: Build Android APK (Debug)
         run: |
           cd android
@@ -52,5 +63,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: StreamX-Final-APK
+          name: StreamX-Success-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
