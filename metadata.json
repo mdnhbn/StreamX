@@ -1,0 +1,7 @@
+{
+  "name": "StreamX - NewPipe Web Pro",
+  "description": "A high-performance video streaming platform with background playback, YouTube/Dailymotion integration, and advanced monetization features.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

@@ -1,0 +1,25 @@
+
+{
+  "appId": "com.streamx.newpipepro",
+  "appName": "StreamX Pro",
+  "webDir": ".",
+  "bundledWebRuntime": false,
+  "server": {
+    "allowNavigation": ["*"],
+    "cleartext": true
+  },
+  "android": {
+    "allowMixedContent": true,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": true,
+    "useHybridWebView": true
+  },
+  "plugins": {
+    "CapacitorCookies": {
+      "enabled": true
+    },
+    "Browser": {
+      "presentationStyle": "popover"
+    }
+  }
+}
